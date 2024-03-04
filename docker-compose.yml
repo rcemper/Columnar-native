@@ -3,9 +3,7 @@ services:
   iris:
     image: containers.intersystems.com/intersystems/iris-community:latest-cd
     restart: no
-    command: /iris-main
-      - -a /home/irisowner/dev/ascript.sh
-      - --ISCAgent false
+    command: -a /home/irisowner/dev/ascript.sh --ISCAgent false
     ports: 
       - 41773:1972
       - 42773:52773

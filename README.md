@@ -1,4 +1,4 @@
-#Columnar IRIS internal
+# Columnar test IRIS internal
 The package creates a very basic IRIS instance in Docker    
 the code is also available in IPD
 ## Description

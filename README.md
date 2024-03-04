@@ -1,20 +1,13 @@
-# mini-docker
+#Columnar IRIS internal
 The package creates a very basic IRIS instance in Docker    
-It's a proposal for an instance independent of IPM versions.
+the code is also available in IPD
 ## Description
-This repository provides a generic development environment 
-for coding productively with InterSystems ObjectScript.    
-This template:   
-* Runs InterSystems IRIS Community Edition in a docker container
-* besides ZPM it includes WEBTERMINAL and PASSWORDLESS package
-* the namespace defaults to USER
-* any additional setting is provided by additional package related installation
- 
-### Usage
-The container is built directly from **intersystemsdc/iris-community** without any Dockerfile
-- **bscript.sh** runs BEFORE IRIS is started  
-- **script.sh** is executed AFTER the start of IRIS and executes **iris.script** by default
-- changing of port mapping happens in **docker-compose.yml** 
++ The idea of this package is to compare performance of columnar storage   
+inside IRIS without wrapping it to some foreign platform that is not my world
+* In addition I do not want to measure nework performance between 2 containers,
+but inside a closed IRIS environment that I have full under my control
+* even the use of SMP or some Other browser base presentation has some    
+influence. I want to measure as close to the are as possible. 
 
 ### Prerequisites
 Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker desktop](https://www.docker.com/products/docker-desktop) installed.

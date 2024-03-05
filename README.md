@@ -48,10 +48,10 @@ Test Columnar vs. Row Storage
 Select Function or * to exit :
 ```
 * 1 create/clear the tables. Package name **A** to be on top in search
-* 2 fills it with EXACTLY the same data
+* 2 fills it with EXACTLY the same data (INSERT --- SELECT)
 * 3 runs **SELECT AVG(Amount) FROM A.??? WHERE Status = 'SENT'**
-* 4 allows to add data during SELECT cycles
-* 5 does the same in a lager loop
+* 4 allows to add data between SELECT cycles
+* 5 does the same in a larger loop
   
 Being curious I added also DemoB where row store is more advanced   
 using Bitmap Index and Bitslice Index. This was not so impressive.

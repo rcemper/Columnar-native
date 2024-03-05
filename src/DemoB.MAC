@@ -56,6 +56,7 @@ ini
 	if SQLCODE break
  #; &SQL(CREATE BITSLICE INDEX AM ON TABLE B.row (Amount))
  #; does not compile !!! never heard of 10+ years old BITLICE
+	hang 3  ;; to let background SQl finish
 	set sql="CREATE BITSLICE INDEX AM ON TABLE B.row (Amount)"
 	set rs=##class(%SQL.Statement).%ExecDirect(.tStmt,.sql)
 	if rs.%SQLCODE break

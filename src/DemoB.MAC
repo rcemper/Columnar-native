@@ -1,0 +1,147 @@
+ROUTINE DemoB
+Demo ;  Test Columnar vs. Row Storage
+	write !,"Test Columnar vs. Row Storage"
+	write !,"============================="
+	write !?5,"1 - Initialize Tables"
+	write !?5,"2 - Generate Data"
+	write !?5,"3 - Compare SELECT"	
+	write !?5,"4 - Loop SELECT"
+	write !?5,"5 - Auto Loop"
+	read !,"Select Function or * to exit : ",f,!
+	if $e(f)'?1N write !,"bye" quit
+	set %rcc=1
+	do $case($e(f),1:ini
+				,2:gen
+				,3:sel
+				,4:lop
+				,5:aul
+				,:back)
+	goto Demo              
+ini
+	&sql( DROP TABLE A.col)
+	&sql( CREATE TABLE A.col (
+	    		Reference INTEGER,
+	    		Customer VARCHAR(225),
+	    		PaymentDate DATE,
+	    		Vat NUMERIC(10,2),
+	    		Amount NUMERIC(10,2) WITH STORAGETYPE = COLUMNAR,
+	       		Status VARCHAR(10) WITH STORAGETYPE = COLUMNAR))
+	if SQLCODE break
+	
+	write !,"Table A.col re-generated"	
+	&sql( DROP TABLE A.row)
+	&sql( CREATE TABLE A.row (
+				Reference INTEGER,
+				Customer VARCHAR(225),
+				PaymentDate DATE,
+				Vat NUMERIC(10,2),
+				Amount NUMERIC(10,2),
+				Status VARCHAR(10))
+		)
+	if SQLCODE break
+	
+	write !,"Table A.row re-generated"	
+	&sql( DROP TABLE B.row)
+	&sql( CREATE TABLE B.row (
+				Reference INTEGER,
+				Customer VARCHAR(225),
+				PaymentDate DATE,
+				Vat NUMERIC(10,2),
+				Amount NUMERIC(10,2),
+				Status VARCHAR(10))
+		)
+	if SQLCODE break
+	
+ 	&SQL(CREATE BITMAP INDEX ST ON TABLE B.row (Status))
+	if SQLCODE break
+ #; &SQL(CREATE BITSLICE INDEX AM ON TABLE B.row (Amount))
+ #; does not compile !!! never heard of 10+ years old BITLICE
+	set sql="CREATE BITSLICE INDEX AM ON TABLE B.row (Amount)"
+	set rs=##class(%SQL.Statement).%ExecDirect(.tStmt,.sql)
+	if rs.%SQLCODE break
+
+	write !,"Table B.row re-generated",!	
+back 
+	quit
+
+mx(mx)
+	set mx=0
+	&SQL(SELECT max(id) into :mx from A.row)
+	if SQLCODE  zw  break
+	quit
+	
+gen 
+	read !,"Records to add (1...10000)[1]:",ct,! 
+	if 'ct quit
+g1
+	do mx(.min) 
+	if $i(min)
+	for r=1:1:ct {
+		set rf=$r(100000)+1
+			,cu=##class(%PopulateUtils).FirstName()_" "_##class(%PopulateUtils).LastName()
+			,dt=$r(8900)+58000
+			,am=1+$r(1000000)/100
+			,vt=$normalize(am*0.18,2)
+			,st=$p("EMITED,PAYED,SENT,RECEIVED",",",1+$r(4))
+		&sql(INSERT INTO A.row (Reference, Customer, PaymentDate, 
+				Vat, Amount, Status) VALUES 
+				(:rf,:cu,:dt,:vt,:am,:st))
+		if SQLCODE zw  break
+	}
+	do mx(.max)
+	if %rcc Write !,ct_" records added to A.row. New total = "_max
+	&sql(INSERT INTO A.col (Reference, Customer, PaymentDate, 
+				Vat, Amount, Status)
+		SELECT Reference, Customer, PaymentDate, 
+				Vat, Amount, Status from A.row
+				where Id between :min and :max ) 
+	if SQLCODE zw  break
+		&sql(INSERT INTO B.row (Reference, Customer, PaymentDate, 
+				Vat, Amount, Status)
+		SELECT Reference, Customer, PaymentDate, 
+				Vat, Amount, Status from A.row
+				where Id between :min and :max ) 
+	if SQLCODE zw  break				
+	if %rcc Write !,"New records added to A.col,B.row ",!
+	quit
+sel	
+	set t1=$zh
+	&SQL(SELECT AVG(Amount) FROM A.row WHERE Status = 'SENT')
+	set trow=$e($zh-t1_"000000",1,7)
+	if SQLCODE zw  break
+	if %rcc write !?5,"runtime row = ",trow
+	
+	&SQL(SELECT AVG(Amount) FROM B.row WHERE Status = 'SENT')
+	set tbit=$e($zh-t1_"000000",1,7)
+	if SQLCODE zw  break
+	if %rcc write !?5,"runtime bit = ",tbit
+	
+	set t1=$zh
+	&SQL(SELECT AVG(Amount) FROM A.col WHERE Status = 'SENT')
+	set tcol=$e($zh-t1_"000000",1,7)
+	if SQLCODE zw  break
+	if %rcc {
+		write !?5,"runtime col = ",tcol,!
+	} else  {
+		do mx(.recs)
+		write !,"records = "_recs_" row = "_trow_" bit = "_tbit_" col = ",tcol 
+	}
+	quit 
+
+lop
+	set %rcc=0
+	do sel,gen
+	set %rcc=1
+	quit
+aul 
+	set %rcc=0
+	read !,"Loops to run :",aul
+	if 'aul quit
+	write !,"Set steps by loop"
+	do gen
+	for i1=1:1:aul do sel,g1
+	do sel
+	set %rcc=1
+	write !
+	quit
+			

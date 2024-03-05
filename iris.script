@@ -1,6 +1,4 @@
     zn "%SYS"
-    // fix sick package mapping in HSCUSTOM
-    for p="%IPM","%pkg.isc" do ##Class(Config.MapPackages).Delete("HSCUSTOM",p)
     
     // Unexpire passwords and set up passwordless mode to simplify dev use.
     do ##class(Security.Users).UnExpireUserPasswords("*")
@@ -12,8 +10,7 @@
     zpm "install webterminal"
 
     // this should be the place for individual application code.
-
-    zn "USER"
+    zpm "load /home/irisowner/dev -v ":1
     zpm "list"
  
     halt

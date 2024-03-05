@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+  <Document name="columnar-native.ZPM">
+    <Module>
+      <Name>columnar-native</Name>
+	  <Description>comapare columnar storage in COS</Description> 
+      <Version>0.0.1</Version>
+      <Packaging>module</Packaging>
+      <SourcesRoot>src</SourcesRoot>
+      <Resource Name="Demo.MAC"/>
+      <Resource Name="DemoB.MAC"/>
+    </Module>
+  </Document>
+</Export>

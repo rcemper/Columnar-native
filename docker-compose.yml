@@ -1,6 +1,7 @@
 version: '3.6'
 services:
   iris:
+    container_name: columnar-native
     image: intersystemsdc/iris-community
     restart: no
     command: -a /home/irisowner/dev/ascript.sh  

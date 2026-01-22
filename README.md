@@ -1,10 +1,12 @@
+<img src="https://community.intersystems.com/sites/default/files/inline/images/archived.gif" width=100></img><b>&nbsp;no maintenance or update</b>  
+
 # Columnar test IRIS native
 The package creates a very basic IRIS instance in Docker    
 the code is also available in IPM
 ## Description
 + The idea of this package is to compare performance of columnar storage   
 **inside** IRIS without wrapping it to some foreign platform that is not my world 
-* In addition I do not want to measure network performance between 2 containers,    
+* In addition, I do not want to measure network performance between 2 containers,    
 but inside a closed IRIS environment that I have fully under my control 
 * Even the use of SMP or some other browser-based presentation has some     
 influence that I want to avoid. Measuring should be as close to the core as possible.  
